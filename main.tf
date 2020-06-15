@@ -2,8 +2,6 @@ provider "aws" {
   region = var.aws_region
 }
 
-provider "kubernetes" {}
-
 # EKS Cluster Resources
 #  * IAM Role to allow EKS service to manage other AWS services
 #  * EC2 Security Group to allow networking traffic with EKS cluster
@@ -11,7 +9,7 @@ provider "kubernetes" {}
 #
 
 resource "aws_iam_role" "ms-cluster" {
-  name = "ms-up-running-cluster"
+  name = "${var.env_name}.${var.cluster_name}.cluster"
 
   assume_role_policy = <<POLICY
 {
@@ -78,7 +76,7 @@ resource "aws_eks_cluster" "ms-up-running" {
 #
 
 resource "aws_iam_role" "ms-node" {
-  name = "ms-up-running-node"
+  name = "${var.env_name}.${var.cluster_name}.node"
 
   assume_role_policy = <<POLICY
 {

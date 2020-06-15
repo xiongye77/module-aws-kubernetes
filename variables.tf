@@ -4,6 +4,10 @@ variable "aws_region" {
   default     = "eu-west-2"
 }
 
+variable "env_name" {
+  type = string
+}
+
 variable "cluster_name" {
   type = string
 }
