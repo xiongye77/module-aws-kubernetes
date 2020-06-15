@@ -66,7 +66,7 @@ resource "aws_eks_cluster" "ms-up-running" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.ms-cluster-AmazonEKSClusterPolicy    
+    aws_iam_role_policy_attachment.ms-cluster-AmazonEKSClusterPolicy
   ]
 }
 
