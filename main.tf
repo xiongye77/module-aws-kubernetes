@@ -170,24 +170,22 @@ users:
   filename = "kubeconfig"
 }
 
+# SKIP ISTIO INSTALL FOR NOW
+
 
 # Install Istio (default profile)
 # This requires that istioctl is installed and in the path
-# TODO - can I use the istio helm charts for this instead?
-#provisioner "local-exec" {
-#  command = "./istio-1.6.0/bin/istioctl install -y"
+
+#resource "null_resource" "istio-install" {
+# Reinstall istio if the cluster is changed
+#  triggers = {
+#    cluster_id = aws_eks_cluster.ms-up-running.id
+#  }
+
+#  provisioner "local-exec" {
+#    command = "./istio-1.6.0/bin/istioctl install -y --kubeconfig kubeconfig"
+#  }
 #}
-
-resource "null_resource" "istio-install" {
-  # Reinstall istio if the cluster is changed
-  triggers = {
-    cluster_id = aws_eks_cluster.ms-up-running.id
-  }
-
-  provisioner "local-exec" {
-    command = "./istio-1.6.0/bin/istioctl install -y --kubeconfig kubeconfig"
-  }
-}
 
 # Label the default namespeace so that pods will be injected with the Istio sidecar
 #resource "kubernetes_namespace" "istio-default-injector" {
