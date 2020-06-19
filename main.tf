@@ -14,7 +14,7 @@ locals {
 #
 
 resource "aws_iam_role" "ms-cluster" {
-  name = "${local.cluster_name}.cluster"
+  name = "${local.cluster_name}"
 
   assume_role_policy = <<POLICY
 {
