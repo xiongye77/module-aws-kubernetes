@@ -2,11 +2,6 @@ provider "aws" {
   region = var.aws_region
 }
 
-provider "kubernetes" {
-  load_config_file = false
-  config_path = "kubeconfig"
-}
-
 locals {
   cluster_name = "${var.cluster_name}-${var.env_name}"
 }
@@ -171,8 +166,10 @@ users:
   filename = "kubeconfig"
 }
 
-# SKIP ISTIO INSTALL FOR NOW
-
+provider "kubernetes" {
+  load_config_file = false
+  config_path      = "kubeconfig"
+}
 
 # Install Istio (default profile)
 # This requires that istioctl is installed and in the path
