@@ -134,34 +134,67 @@ resource "aws_eks_node_group" "ms-node-group" {
     aws_iam_role_policy_attachment.ms-node-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.ms-node-AmazonEC2ContainerRegistryReadOnly,
   ]
-
-  # Setup kubeconfig using AWS.
-  # This requires that kubectl and aws cli are both installed. It also requires that AWS 
-  # credentials have been setup (either in the environment or in an AWS config file.)
-  provisioner "local-exec" {
-    command = "/usr/local/bin/aws eks --region $REGION update-kubeconfig --name $CLUSTER"
-
-    environment = {
-      REGION  = var.aws_region
-      CLUSTER = local.cluster_name
-    }
-  }
-
-  # Install Istio (default profile)
-  # This requires that istioctl is installed and in the path
-  # TODO - can I use the istio helm charts for this instead?
-  provisioner "local-exec" {
-    command = "./istio-1.6.0/bin/istioctl install -y"
-  }
 }
 
+# Create a kubeconfig file based on the cluster that has been created
+resource "local_file" "kubeconfig" {
+  content  = <<KUBECONFIG
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: ${aws_eks_cluster.ms-up-running.certificate_authority.0.data}
+    server: ${aws_eks_cluster.ms-up-running.endpoint}
+  name: ${aws_eks_cluster.ms-up-running.arn}
+contexts:
+- context:
+    cluster: ${aws_eks_cluster.ms-up-running.arn}
+    user: ${aws_eks_cluster.ms-up-running.arn}
+  name: ${aws_eks_cluster.ms-up-running.arn}
+current-context: ${aws_eks_cluster.ms-up-running.arn}
+kind: Config
+preferences: {}
+users:
+- name: ${aws_eks_cluster.ms-up-running.arn}
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1alpha1
+      args:
+      - --region
+      - ${local.aws_region}
+      - eks
+      - get-token
+      - --cluster-name
+      - ${local.cluster-name}
+      command: aws
+    KUBECONFIG
+  filename = "kubeconfig"
+}
+
+ 
+# Install Istio (default profile)
+# This requires that istioctl is installed and in the path
+# TODO - can I use the istio helm charts for this instead?
+#provisioner "local-exec" {
+#  command = "./istio-1.6.0/bin/istioctl install -y"
+#}
+
+resource "null_resource" "istio-install" {
+  # Reinstall istio if the cluster is changed
+  triggers = {
+    cluster_id = ${aws_eks_cluster.ms-cluster.id}
+  }
+
+  provisioner "local-exec" {
+   command = "./istio-1.6.0/bin/istioctl install -y --kubeconfig kubeconfig"
+  }
+}
+ 
 # Label the default namespeace so that pods will be injected with the Istio sidecar
-resource "kubernetes_namespace" "istio-default-injector" {
-  metadata {
-    labels = {
-      istio-injection = "enabled"
-    }
-
-    name = "default"
-  }
-}
+#resource "kubernetes_namespace" "istio-default-injector" {
+#  metadata {
+#    labels = {
+#      istio-injection = "enabled"
+#    }
+#    name = "default"
+#  }
+#}
