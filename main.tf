@@ -176,7 +176,7 @@ resource "null_resource" "istio-install" {
   }
 
   provisioner "local-exec" {
-    command = "./istio-1.6.0/bin/istioctl install -y --kubeconfig kubeconfig"
+    command = "istioctl install -y --kubeconfig kubeconfig"
   }
 }
 
