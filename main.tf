@@ -2,6 +2,11 @@ provider "aws" {
   region = var.aws_region
 }
 
+locals {
+  cluster_name = "${var.cluster_name}-${var.env_name}"
+}
+
+
 # EKS Cluster Resources
 #  * IAM Role to allow EKS service to manage other AWS services
 #  * EC2 Security Group to allow networking traffic with EKS cluster
@@ -9,7 +14,7 @@ provider "aws" {
 #
 
 resource "aws_iam_role" "ms-cluster" {
-  name = "${var.env_name}.${var.cluster_name}.cluster"
+  name = "${local.cluster_name}.cluster"
 
   assume_role_policy = <<POLICY
 {
@@ -38,7 +43,7 @@ resource "aws_iam_role_policy_attachment" "ms-cluster-AmazonEKSClusterPolicy" {
 //}
 
 resource "aws_security_group" "ms-cluster" {
-  name        = "ms-up-running-cluster"
+  name        = local.cluster_name
   description = "Cluster communication with worker nodes"
   vpc_id      = var.vpc_id
 
@@ -55,7 +60,7 @@ resource "aws_security_group" "ms-cluster" {
 }
 
 resource "aws_eks_cluster" "ms-up-running" {
-  name     = var.cluster_name
+  name     = local.cluster_name
   role_arn = aws_iam_role.ms-cluster.arn
 
   vpc_config {
@@ -76,7 +81,7 @@ resource "aws_eks_cluster" "ms-up-running" {
 #
 
 resource "aws_iam_role" "ms-node" {
-  name = "${var.env_name}.${var.cluster_name}.node"
+  name = "${local.cluster_name}.node"
 
   assume_role_policy = <<POLICY
 {
@@ -138,7 +143,7 @@ resource "aws_eks_node_group" "ms-node-group" {
 
     environment = {
       REGION  = var.aws_region
-      CLUSTER = var.cluster_name
+      CLUSTER = local.cluster_name
     }
   }
 
@@ -160,11 +165,3 @@ resource "kubernetes_namespace" "istio-default-injector" {
     name = "default"
   }
 }
-
-#kubectl create namespace argocd
-#resource "kubernetes_namespace" "argocd" {
-#    name = "argocd" 
-#}
-
-#kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-#resource "kubernetes_" 

@@ -25,15 +25,18 @@ variable "nodegroup_subnet_ids" {
 }
 
 variable "nodegroup_desired_size" {
-  type = number
+  type    = number
+  default = 1
 }
 
 variable "nodegroup_min_size" {
-  type = number
+  type    = number
+  default = 1
 }
 
 variable "nodegroup_max_size" {
-  type = number
+  type    = number
+  default = 5
 }
 
 variable "nodegroup_disk_size" {
