@@ -2,10 +2,14 @@ provider "aws" {
   region = var.aws_region
 }
 
+provider "kubernetes" {
+  load_config_file = false
+  config_path = "kubeconfig"
+}
+
 locals {
   cluster_name = "${var.cluster_name}-${var.env_name}"
 }
-
 
 # EKS Cluster Resources
 #  * IAM Role to allow EKS service to manage other AWS services
@@ -185,11 +189,11 @@ resource "null_resource" "istio-install" {
 }
 
 # Label the default namespeace so that pods will be injected with the Istio sidecar
-#resource "kubernetes_namespace" "istio-default-injector" {
-#  metadata {
-#    labels = {
-#      istio-injection = "enabled"
-#    }
-#    name = "default"
-#  }
-#}
+resource "kubernetes_namespace" "istio-default-injector" {
+  metadata {
+    labels = {
+      istio-injection = "enabled"
+    }
+    name = "default"
+  }
+}
