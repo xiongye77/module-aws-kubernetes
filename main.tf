@@ -166,31 +166,31 @@ users:
   filename = "kubeconfig"
 }
 
-provider "kubernetes" {
-  load_config_file = false
-  config_path      = "kubeconfig"
-}
+#provider "kubernetes" {
+#  load_config_file = false
+#  config_path      = "kubeconfig"
+#}
 
 # Install Istio (default profile)
 # This requires that istioctl is installed and in the path
 
-resource "null_resource" "istio-install" {
-  # Reinstall istio if the cluster is changed
-  triggers = {
-    cluster_id = aws_eks_cluster.ms-up-running.id
-  }
+#resource "null_resource" "istio-install" {
+# Reinstall istio if the cluster is changed
+#  triggers = {
+#    cluster_id = aws_eks_cluster.ms-up-running.id
+#  }
 
-  provisioner "local-exec" {
-    command = "./istio-1.6.0/bin/istioctl install -y --kubeconfig kubeconfig"
-  }
-}
+#  provisioner "local-exec" {
+#    command = "./istio-1.6.0/bin/istioctl install -y --kubeconfig kubeconfig"
+#  }
+#}
 
 # Label the default namespeace so that pods will be injected with the Istio sidecar
-resource "kubernetes_namespace" "istio-default-injector" {
-  metadata {
-    labels = {
-      istio-injection = "enabled"
-    }
-    name = "default"
-  }
-}
+#resource "kubernetes_namespace" "istio-default-injector" {
+#  metadata {
+#    labels = {
+#      istio-injection = "enabled"
+#    }
+#    name = "default"
+#  }
+#}
