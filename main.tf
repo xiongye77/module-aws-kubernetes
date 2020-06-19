@@ -184,12 +184,12 @@ provider "kubernetes" {
   config_path = "kubeconfig"
 }
 
-# Label the default namespeace so that pods will be injected with the Istio sidecar
-resource "kubernetes_namespace" "istio-default-injector" {
+# Create a namespace for microservice pods and label it for automatic sidecar injection
+resource "kubernetes_namespace" "ms-namespace" {
   metadata {
     labels = {
       istio-injection = "enabled"
     }
-    name = "default"
+    name = var.ms_namespace
   }
 }

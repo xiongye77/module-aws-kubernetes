@@ -12,6 +12,12 @@ variable "cluster_name" {
   type = string
 }
 
+variable "ms_namespace" {
+  type    = string
+  default = "microservices"
+}
+
+
 variable "vpc_id" {
   type = string
 }
