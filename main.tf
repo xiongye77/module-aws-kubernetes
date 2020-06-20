@@ -184,8 +184,6 @@ provider "kubernetes" {
   load_config_file         = false
   cluster_ca_certificate   = base64decode(aws_eks_cluster.ms-up-running.certificate_authority.0.data)
   host                     = aws_eks_cluster.ms-up-running.endpoint
-  config_context_auth_info = aws_eks_cluster.ms-up-running.arn
-  username                 = aws_eks_cluster.ms-up-running.arn
   exec {
     api_version = "client.authentication.k8s.io/v1alpha1"
     command     = "aws-iam-authenticator"
