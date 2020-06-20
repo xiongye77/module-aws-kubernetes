@@ -187,7 +187,7 @@ provider "kubernetes" {
   config_context_auth_info = aws_eks_cluster.ms-up-running.arn
   username                 = aws_eks_cluster.ms-up-running.arn
   exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
+    api_version = "client.authentication.k8s.io/v1alpha1"
     command     = "aws-iam-authenticator"
     args        = ["token", "-i", "${aws_eks_cluster.ms-up-running.name}"]
   }
