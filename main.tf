@@ -181,8 +181,11 @@ resource "null_resource" "istio-install" {
 }
 
 provider "kubernetes" {
-  load_config_file       = false
-  cluster_ca_certificate = aws_eks_cluster.ms-up-running.certificate_authority.0.data
+  load_config_file         = false
+  cluster_ca_certificate   = aws_eks_cluster.ms-up-running.certificate_authority.0.data
+  host                     = aws_eks_cluster.ms-up-running.endpoint
+  config_context_auth_info = aws_eks_cluster.ms-up-running.arn
+  username                 = aws_eks_cluster.ms-up-running.arn
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws-iam-authenticator"
