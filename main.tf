@@ -181,7 +181,13 @@ resource "null_resource" "istio-install" {
 }
 
 provider "kubernetes" {
-  config_path = "kubeconfig"
+  load_config_file       = false
+  cluster_ca_certificate = aws_eks_cluster.ms-up-running.certificate_authority.0.data
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws-iam-authenticator"
+    args        = ["token", "-i", "${aws_eks_cluster.ms-up-running.name}"]
+  }
 }
 
 # Create a namespace for microservice pods and label it for automatic sidecar injection
