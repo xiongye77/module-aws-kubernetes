@@ -182,7 +182,7 @@ resource "null_resource" "istio-install" {
 
 provider "kubernetes" {
   load_config_file         = false
-  cluster_ca_certificate   = aws_eks_cluster.ms-up-running.certificate_authority.0.data
+  cluster_ca_certificate   = base64decode(aws_eks_cluster.ms-up-running.certificate_authority.0.data)
   host                     = aws_eks_cluster.ms-up-running.endpoint
   config_context_auth_info = aws_eks_cluster.ms-up-running.arn
   username                 = aws_eks_cluster.ms-up-running.arn
