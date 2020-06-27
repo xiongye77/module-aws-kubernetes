@@ -176,6 +176,8 @@ resource "null_resource" "istio-install" {
     cluster_id = aws_eks_cluster.ms-up-running.id
   }
 
+  depends_on = [aws_eks_node_group.ms-node-group]
+
   provisioner "local-exec" {
     command = "istioctl install -y --kubeconfig kubeconfig"
   }
@@ -194,6 +196,7 @@ provider "kubernetes" {
 
 # Create a namespace for microservice pods and label it for automatic sidecar injection
 resource "kubernetes_namespace" "ms-namespace" {
+  depends_on = [null_resource.istio-install]
   metadata {
     labels = {
       istio-injection = "enabled"
