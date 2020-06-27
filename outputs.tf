@@ -13,3 +13,7 @@ output "eks_cluster_certificate_data" {
 output "eks_cluster_endpoint" {
   value = aws_eks_cluster.ms-up-running.endpoint
 }
+
+output "eks_cluster_nodegroup_id" {
+  value = aws_eks_node_group.ms-node-group.id
+}

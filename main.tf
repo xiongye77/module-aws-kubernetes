@@ -176,6 +176,7 @@ resource "null_resource" "istio-install" {
     cluster_id = aws_eks_cluster.ms-up-running.id
   }
 
+  # Make sure that the EKS node group is running before we try to install Istio
   depends_on = [aws_eks_node_group.ms-node-group]
 
   provisioner "local-exec" {
@@ -196,7 +197,9 @@ provider "kubernetes" {
 
 # Create a namespace for microservice pods and label it for automatic sidecar injection
 resource "kubernetes_namespace" "ms-namespace" {
-  depends_on = [null_resource.istio-install]
+
+  # Make sure that the EKS node group is running before we try to install Istio
+  depends_on = [aws_eks_node_group.ms-node-group]
   metadata {
     labels = {
       istio-injection = "enabled"
