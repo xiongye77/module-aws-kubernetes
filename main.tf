@@ -165,6 +165,7 @@ users:
     KUBECONFIG
   filename = "kubeconfig"
 }
+# We could make the filename variable based on the env, but then we'd need to change the action workflow 
 
 # Install Istio (default profile)
 # This requires that istioctl is installed and in the path
@@ -181,9 +182,9 @@ resource "null_resource" "istio-install" {
 }
 
 provider "kubernetes" {
-  load_config_file         = false
-  cluster_ca_certificate   = base64decode(aws_eks_cluster.ms-up-running.certificate_authority.0.data)
-  host                     = aws_eks_cluster.ms-up-running.endpoint
+  load_config_file       = false
+  cluster_ca_certificate = base64decode(aws_eks_cluster.ms-up-running.certificate_authority.0.data)
+  host                   = aws_eks_cluster.ms-up-running.endpoint
   exec {
     api_version = "client.authentication.k8s.io/v1alpha1"
     command     = "aws-iam-authenticator"
