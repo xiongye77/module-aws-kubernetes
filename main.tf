@@ -182,6 +182,13 @@ resource "null_resource" "istio-install" {
   provisioner "local-exec" {
     command = "istioctl install -y --kubeconfig kubeconfig"
   }
+
+  # May need something for destroy
+  #provisioner "local-exec" {
+  #  when = "destroy"
+  #  command = "istioctl manifest generate | kubectl delete -f -"
+  # kubectl --kubeconfig kubeconfig -n istio-system delete deployment,pod,svc --all
+  #}
 }
 
 provider "kubernetes" {
