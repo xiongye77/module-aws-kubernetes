@@ -127,7 +127,9 @@ resource "aws_eks_node_group" "ms-node-group" {
 
   disk_size      = var.nodegroup_disk_size
   instance_types = var.nodegroup_instance_types
-
+  remote_access {
+    ec2_ssh_key   = "jenkins_0107"
+  }     
   depends_on = [
     aws_iam_role_policy_attachment.ms-node-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.ms-node-AmazonEKS_CNI_Policy,
